@@ -134,14 +134,17 @@ inline void Set<T>::Sort()
 	do 
 	{
 		swapped = false;
-		Iterator<Pair<T, T>> iter = m_values.begin();
+		Iterator<Pair<T, T>> iterA = m_values.begin();
+		Iterator<Pair<T, T>> iterB = m_values.begin()++;
 		for (int i = 0; i < length - 1; i++)
 		{
-			if ((iter.operator*()).value > ((iter++).operator*()).value)
+			if ((iterA.operator*()).value > (iterB.operator*()).value)
 			{
-				m_values.Swap(*iter, *(iter++));
+				m_values.Swap(*iterA, *iterB);
 				swapped = true;
 			}
+			iterA++;
+			iterB++;
 		}
 	} while (swapped);
 }
