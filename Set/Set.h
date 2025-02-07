@@ -1,6 +1,5 @@
 #pragma once
 #include "Pair.h"
-#include "List.h"
 #include "Iterator.h"
 #include <initializer_list>
 
@@ -8,7 +7,8 @@ template <typename T>
 class Set 
 {
 private:
-	List<Pair<T, T>> m_values;
+	// m_values oughta not be a linked list
+	// List<Pair<T, T>> m_values;
 
 public:
 	Set<T>() = default;
@@ -26,6 +26,63 @@ private:
 	void Sort();
 };
 
+
+
+
+template<typename T>
+inline Set<T>::Set(std::initializer_list<T> values)
+{
+}
+
+template<typename T>
+inline Set<T>::~Set()
+{
+}
+
+template<typename T>
+inline bool Set<T>::Add(T key)
+{
+	return false;
+}
+
+template<typename T>
+inline bool Set<T>::Remove(T key)
+{
+	return false;
+}
+
+template<typename T>
+inline int Set<T>::GetLength()
+{
+	return 0;
+}
+
+template<typename T>
+inline T Set<T>::operator[](T key)
+{
+	return T();
+}
+
+template<typename T>
+inline Pair<T, T> Set<T>::GetPair(T key)
+{
+	return Pair<T, T>();
+}
+
+template<typename T>
+inline Iterator<Pair<T, T>> Set<T>::begin()
+{
+	return Iterator<Pair<T, T>>();
+}
+
+template<typename T>
+inline Iterator<Pair<T, T>> Set<T>::end()
+{
+	return Iterator<Pair<T, T>>();
+}
+
+// OLD STINKY CODE
+/*
 template<typename T>
 inline Set<T>::Set(std::initializer_list<T> values)
 {
@@ -135,7 +192,8 @@ inline void Set<T>::Sort()
 	{
 		swapped = false;
 		Iterator<Pair<T, T>> iterA = m_values.begin();
-		Iterator<Pair<T, T>> iterB = m_values.begin()++;
+		Iterator<Pair<T, T>> iterB = m_values.begin();
+		iterB++;
 		for (int i = 0; i < length - 1; i++)
 		{
 			if ((iterA.operator*()).value > (iterB.operator*()).value)
@@ -148,3 +206,4 @@ inline void Set<T>::Sort()
 		}
 	} while (swapped);
 }
+*/
