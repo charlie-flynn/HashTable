@@ -4,7 +4,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace SetTests
+namespace HashTableTests
 {
 	TEST_CLASS(SetTests)
 	{
@@ -16,7 +16,8 @@ namespace SetTests
 
 		TEST_METHOD(InitializerListConstructor)
 		{
-
+			HashTable hash = { "100", "forty thousand", "oh god do i have to cast all of these" };
+			hash.GetLength();
 		}
 	};
 }

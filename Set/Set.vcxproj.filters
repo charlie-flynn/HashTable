@@ -21,6 +21,9 @@
     <ClCompile Include="HashTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HashPair.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Set.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HashPair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

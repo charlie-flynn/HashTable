@@ -1,33 +1,32 @@
 #include "HashTable.h"
+#include <iostream>
 
 HashTable::HashTable(int size)
 {
     m_length = size;
     m_arrayLength = m_length * 2;
-    m_values = new Pair<unsigned int, unsigned char*>();
-}
+    m_values = new HashPair();
 
-HashTable::HashTable(std::initializer_list<unsigned char*> values, int size)
-{
-    m_length = size;
-    m_arrayLength = m_length * 2;
-    m_values = new Pair<unsigned int, unsigned char*>();
-
-    for (unsigned char* value : values)
+    for (int i = 0; i < m_arrayLength; i++)
     {
-        Add(value);
+        m_values[i] = HashPair();
     }
 }
 
-HashTable::HashTable(unsigned char* values, int length)
+HashTable::HashTable(char* values, int* valuesLength, int arrayLength)
 {
-    m_length = length;
+    m_length = arrayLength;
     m_arrayLength = m_length * 2;
-    m_values = new Pair<unsigned int, unsigned char*>();
+    m_values = new HashPair();
 
-    for (int i = 0; i < length; i++)
+    for (int i = 0; i < m_arrayLength; i++)
     {
-        Add(&values[i]);
+        m_values[i] = HashPair();
+    }
+
+    for (int i = 0; i < arrayLength; i++)
+    {
+        Add((unsigned char*)values[i], valuesLength[i]);
     }
 }
 
@@ -36,20 +35,19 @@ HashTable::~HashTable()
     delete[] m_values;
 }
 
-unsigned char* HashTable::operator[](unsigned char* value)
+unsigned char* HashTable::operator[](char* value)
 {
-    unsigned int index = Hash(value);
+    unsigned int key = Hash((unsigned char*)value);
+    unsigned int index = key;
     int numberSearched = 0;
 
     while (true)
     {
-        if (numberSearched == m_arrayLength)
+        if (numberSearched == m_arrayLength || &m_values[index] == nullptr)
             return nullptr;
 
-        if (m_values[index].key == index)
+        if (m_values[index].key == key)
             return m_values[index].value;
-        else if (&m_values[index] == nullptr)
-            return nullptr;
         else
         {
             index = (index + 1) % m_arrayLength;
@@ -58,7 +56,7 @@ unsigned char* HashTable::operator[](unsigned char* value)
     }
 }
 
-bool HashTable::Add(unsigned char* value)
+bool HashTable::Add(unsigned char* value, int length)
 {
     unsigned int index = Hash(value);
     int numberSearched = 0;
@@ -70,7 +68,7 @@ bool HashTable::Add(unsigned char* value)
 
         if (&m_values[index] == nullptr)
         {
-            m_values[index] = Pair<unsigned int, unsigned char*>(index, value);
+            m_values[index] = HashPair(index, value, (unsigned int)length);
             return true;
         }
         else
@@ -97,7 +95,7 @@ bool HashTable::Remove(unsigned char* value)
         {
             if (m_values[index].key == index)
             {
-                m_values[index] = Pair<unsigned int, unsigned char*>();
+                m_values[index] = HashPair();
                 return true;
             }
         }
@@ -110,10 +108,10 @@ bool HashTable::Remove(unsigned char* value)
     return false;
 }
 
-unsigned int HashTable::Hash(unsigned char* value)
+unsigned int HashTable::Hash(unsigned char* value, int length)
 {
     unsigned int hash = 0, x = 0;
-    for (unsigned int i = 0; i < m_arrayLength; ++i) 
+    for (unsigned int i = 0; i < length; i++)
     {
         hash = (hash << 4) + value[i];
         if ((x = hash & 0xF0000000L) != 0) 
