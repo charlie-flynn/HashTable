@@ -5,10 +5,10 @@ struct HashPair
 public:
 	unsigned int key;
 	unsigned char* value;
-	unsigned int valueLength;
+	unsigned int hashed;
 
 	HashPair();
-	HashPair(unsigned int key, unsigned char* value, int valueLength);
+	HashPair(unsigned int key, unsigned char* value, unsigned int hashed);
 };
 
 
