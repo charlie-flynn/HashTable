@@ -51,44 +51,49 @@ HashTable::HashTable(char* values, int length)
 HashTable::~HashTable()
 {
     delete[] m_values;
+    m_values = nullptr;
 }
 
 unsigned char* HashTable::operator[](char* value)
 {
-    unsigned int key = Hash((unsigned char*)value);
+    unsigned int hashed = Hash((unsigned char*)value);
+    unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
     int numberSearched = 0;
 
     while (true)
     {
-        if (numberSearched == m_arrayLength || &m_values[index] == nullptr)
+        if (numberSearched == m_arrayLength - 1 || &m_values[index] == nullptr)
             return nullptr;
 
         if (m_values[index].key == key)
-            return m_values[index].value;
-        else
         {
-            index = (index + 1) % m_arrayLength;
-            numberSearched++;
+            if (m_values[index].hashed == hashed)
+            {
+                return m_values[index].value;
+            }
         }
+
+        index = (index + 1) % m_arrayLength;
+        numberSearched++;
     }
 }
 
 bool HashTable::Add(unsigned char* value)
 {
     unsigned int hashed = Hash(value);
-    unsigned int index = hashed % m_arrayLength;
+    unsigned int key = hashed % m_arrayLength;
+    unsigned int index = key;
     int numberSearched = 0;
 
     while (true)
     {
-        if (numberSearched == m_arrayLength)
+        if (numberSearched == m_arrayLength - 1)
             return false;
 
         if (m_values[index].key == HashPair().key)
         {
-            if (m_values)
-            m_values[index] = HashPair(index, value, ((std::string)(char*)value).length());
+            m_values[index] = HashPair(key, value, hashed);
             return true;
         }
         else
@@ -103,20 +108,24 @@ bool HashTable::Add(unsigned char* value)
 
 bool HashTable::Remove(unsigned char* value)
 {
-    unsigned int index = Hash(value);
+    unsigned int hashed = Hash(value);
+    unsigned int index = hashed % m_arrayLength;
     int numberSearched = 0;
 
     while (true)
     {
-        if (numberSearched == m_arrayLength)
+        if (numberSearched == m_arrayLength - 1)
             return false;
 
         if (&m_values[index] != nullptr)
         {
             if (m_values[index].key == index)
             {
-                m_values[index] = HashPair();
-                return true;
+                if (m_values[index].hashed == hashed)
+                {
+                    m_values[index] = HashPair();
+                    return true;
+                }
             }
         }
 
