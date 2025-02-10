@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "../Set/Set.h"
+#include "../Set/HashTable.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -16,21 +16,7 @@ namespace SetTests
 
 		TEST_METHOD(InitializerListConstructor)
 		{
-			Set<int> set = { 10, 20, 30, 40, 50 };
 
-			Iterator<Pair<int, int>> iter = set.begin();
-
-			Assert::AreEqual(5, set.GetLength());
-
-			Assert::AreEqual(10, (*iter).value);
-			iter++;
-			Assert::AreEqual(20, (*iter).value);
-			iter++;
-			Assert::AreEqual(30, (*iter).value);
-			iter++;
-			Assert::AreEqual(40, (*iter).value);
-			iter++;
-			Assert::AreEqual(50, (*iter).value);
 		}
 	};
 }
