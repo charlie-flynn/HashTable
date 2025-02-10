@@ -1,42 +1,56 @@
 #pragma once
 #include "Pair.h"
-#include "Iterator.h"
 #include <initializer_list>
 
 template <typename T>
 class Set 
 {
 private:
-	// m_values oughta not be a linked list
-	// List<Pair<T, T>> m_values;
+	Pair<T, T>[] m_values;
+	int m_length;
+	int m_arrayLength;
 
 public:
-	Set<T>() = default;
+	Set<T>();
 	Set<T>(std::initializer_list<T> values);
+	Set<T>(T* values, int length);
 	~Set<T>();
 	bool Add(T key);
 	bool Remove(T key);
+	bool Contains(T key);
 	int GetLength();
+	int GetArrayLength(); // returns m_arrayLength
 	T operator[](T key);
 	Pair<T, T> GetPair(T key);
-	Iterator<Pair<T, T>> begin();
-	Iterator<Pair<T, T>> end();
 
 private:
 	void Sort();
+	void GrowArray();
+	bool TrimArray();
 };
 
 
 
 
 template<typename T>
-inline Set<T>::Set(std::initializer_list<T> values)
+inline Set<T>::Set() : m_length(0), m_arrayLength(0)
+{
+}
+
+template<typename T>
+inline Set<T>::Set(std::initializer_list<T> values) : m_length(values.size()), m_arrayLength(values.size())
+{
+}
+
+template<typename T>
+inline Set<T>::Set(T* values, int length) : m_values(values), m_length(length), m_arrayLength(length)
 {
 }
 
 template<typename T>
 inline Set<T>::~Set()
 {
+	delete[] m_values;
 }
 
 template<typename T>
@@ -52,9 +66,21 @@ inline bool Set<T>::Remove(T key)
 }
 
 template<typename T>
+inline bool Set<T>::Contains(T key)
+{
+	return false;
+}
+
+template<typename T>
 inline int Set<T>::GetLength()
 {
-	return 0;
+	return m_length;
+}
+
+template<typename T>
+inline int Set<T>::GetArrayLength()
+{
+	return m_arrayLength;
 }
 
 template<typename T>
@@ -70,15 +96,20 @@ inline Pair<T, T> Set<T>::GetPair(T key)
 }
 
 template<typename T>
-inline Iterator<Pair<T, T>> Set<T>::begin()
+inline void Set<T>::Sort()
 {
-	return Iterator<Pair<T, T>>();
 }
 
 template<typename T>
-inline Iterator<Pair<T, T>> Set<T>::end()
+inline void Set<T>::GrowArray()
 {
-	return Iterator<Pair<T, T>>();
+	return false;
+}
+
+template<typename T>
+inline bool Set<T>::TrimArray()
+{
+	return false;
 }
 
 // OLD STINKY CODE
