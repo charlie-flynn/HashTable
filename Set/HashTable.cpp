@@ -28,12 +28,11 @@ HashTable::HashTable(std::initializer_list<const char*> values)
     // have to do this in case there's duplicates
     for (const char* value : values)
     {
-        if (Add((unsigned char*)value))
-            m_count++;
+        Add(value);
     }
 }
 
-HashTable::HashTable(char* values, int length)
+HashTable::HashTable(char* values[], int length)
 {
     m_count = 0;
     m_arrayLength = length * 2;
@@ -47,7 +46,7 @@ HashTable::HashTable(char* values, int length)
     // have to do this in case there's duplicates
     for (int i = 0; i < length; i++)
     {
-        if (Add((unsigned char*)values[i]))
+        if (Add(values[i]))
             m_count++;
     }
 }
@@ -86,21 +85,25 @@ unsigned char*& HashTable::operator[](const char* key)
     }
 }
 
-bool HashTable::Add(unsigned char* value)
+bool HashTable::Add(const char* value)
 {
-    unsigned int hashed = Hash(value);
+    unsigned int hashed = Hash((unsigned char*)value);
     unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
     int numberSearched = 0;
+
+    if (m_count >= m_arrayLength)
+        return false;
 
     while (true)
     {
         if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == hashed)
             return false;
 
-        if (m_values[index].key == HashPair().key)
+        if (m_values[index].key == 0)
         {
-            m_values[index] = HashPair(key, value, hashed);
+            m_values[index] = HashPair(key, (unsigned char*)value, hashed);
+            m_count++;
             return true;
         }
         else
@@ -131,7 +134,7 @@ bool HashTable::Remove(unsigned char* value)
                 if (m_values[index].hashed == hashed)
                 {
                     m_values[index] = HashPair();
-                    m_count++;
+                    m_count--;
                     return true;
                 }
             }
@@ -161,7 +164,10 @@ void HashTable::Resize(int size)
             newValues[m_values[i].hashed % size] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);   
             copiedCount++;
             if (copiedCount > size)
+            {
+                m_count = copiedCount;
                 break;
+            }
         }
     }
     delete[] m_values;
@@ -187,4 +193,15 @@ unsigned int HashTable::Hash(unsigned char* value)
         }
     }
     return (hash & 0x7FFFFFFF);
+}
+
+void HashTable::Clear()
+{
+    delete[] m_values;
+    m_values = new HashPair[m_arrayLength];
+
+    for (int i = 0; i < m_arrayLength; i++)
+    {
+        m_values[i] = HashPair();
+    }
 }
