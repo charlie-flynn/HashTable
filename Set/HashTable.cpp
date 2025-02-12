@@ -25,7 +25,6 @@ HashTable::HashTable(std::initializer_list<const char*> values)
         m_values[i] = HashPair();
     }
 
-    // have to do this in case there's duplicates
     for (const char* value : values)
     {
         Add(value);
@@ -46,8 +45,7 @@ HashTable::HashTable(char* values[], int length)
     // have to do this in case there's duplicates
     for (int i = 0; i < length; i++)
     {
-        if (Add(values[i]))
-            m_count++;
+        Add(values[i]);
     }
 }
 
@@ -100,7 +98,7 @@ bool HashTable::Add(const char* value)
         if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == hashed)
             return false;
 
-        if (m_values[index].key == 0)
+        if (m_values[index].hashed == 0)
         {
             m_values[index] = HashPair(key, (unsigned char*)value, hashed);
             m_count++;
