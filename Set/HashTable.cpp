@@ -16,8 +16,8 @@ HashTable::HashTable(int size)
 
 HashTable::HashTable(std::initializer_list<const char*> values)
 {
-    m_count = values.size();
-    m_arrayLength = m_count * 2;
+    m_count = 0;
+    m_arrayLength = values.size() * 2;
     m_values = new HashPair[m_arrayLength];
 
     for (int i = 0; i < m_arrayLength; i++)
@@ -25,16 +25,18 @@ HashTable::HashTable(std::initializer_list<const char*> values)
         m_values[i] = HashPair();
     }
 
+    // have to do this in case there's duplicates
     for (const char* value : values)
     {
-        Add((unsigned char*)value);
+        if (Add((unsigned char*)value))
+            m_count++;
     }
 }
 
 HashTable::HashTable(char* values, int length)
 {
-    m_count = length;
-    m_arrayLength = m_count * 2;
+    m_count = 0;
+    m_arrayLength = length * 2;
     m_values = new HashPair[m_arrayLength];
 
     for (int i = 0; i < m_arrayLength; i++)
@@ -42,9 +44,11 @@ HashTable::HashTable(char* values, int length)
         m_values[i] = HashPair();
     }
 
+    // have to do this in case there's duplicates
     for (int i = 0; i < length; i++)
     {
-        Add((unsigned char*)values[i]);
+        if (Add((unsigned char*)values[i]))
+            m_count++;
     }
 }
 
@@ -54,11 +58,11 @@ HashTable::~HashTable()
     m_values = nullptr;
 }
 
-unsigned char*& HashTable::operator[](char* value)
+unsigned char*& HashTable::operator[](const char* key)
 {
-    unsigned int hashed = Hash((unsigned char*)value);
-    unsigned int key = hashed % m_arrayLength;
-    unsigned int index = key;
+    unsigned int hashed = Hash((unsigned char*)key);
+    unsigned int keyHashed = hashed % m_arrayLength;
+    unsigned int index = keyHashed;
     int numberSearched = 0;
 
     while (true)
@@ -69,7 +73,7 @@ unsigned char*& HashTable::operator[](char* value)
             return nullpointer;
         }
 
-        if (m_values[index].key == key)
+        if (m_values[index].key == keyHashed)
         {
             if (m_values[index].hashed == hashed)
             {
@@ -141,15 +145,24 @@ bool HashTable::Remove(unsigned char* value)
     return false;
 }
 
+// Resizes the hash table to the given size.
+// NOTE: if the size is smaller than the current count, you will lose data!
 void HashTable::Resize(int size)
 {
+    int copiedCount = 0;
+
     HashPair* newValues = new HashPair[size];
     int oldLength = m_arrayLength;
     m_arrayLength = size;
     for (int i = 0; i < oldLength; i++)
     {
         if (m_values[i].hashed != 0)
+        {
             newValues[m_values[i].hashed % size] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);   
+            copiedCount++;
+            if (copiedCount > size)
+                break;
+        }
     }
     delete[] m_values;
     m_values = newValues;

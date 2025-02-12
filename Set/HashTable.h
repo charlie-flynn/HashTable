@@ -13,7 +13,7 @@ public:
 	HashTable(std::initializer_list<const char*> values);
 	HashTable(char* values, int length);
 	~HashTable();
-	unsigned char*& operator[](char* value);
+	unsigned char*& operator[](const char* value);
 	bool Add(unsigned char* value);
 	bool Remove(unsigned char* value);
 	void Resize(int size);
