@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 
+// Creates an empty hash table of the given size.
 HashTable::HashTable(int size)
 {
     m_count = 0;
@@ -14,6 +15,7 @@ HashTable::HashTable(int size)
     }
 }
 
+// Creates a hash table of twice the size of the given initializer list, with the given contents inside.
 HashTable::HashTable(std::initializer_list<const char*> values)
 {
     m_count = 0;
@@ -31,6 +33,7 @@ HashTable::HashTable(std::initializer_list<const char*> values)
     }
 }
 
+// Creates a hash table of twice the size of the given character pointer array, with the given contents inside.
 HashTable::HashTable(char* values[], int length)
 {
     m_count = 0;
@@ -42,7 +45,6 @@ HashTable::HashTable(char* values[], int length)
         m_values[i] = HashPair();
     }
 
-    // have to do this in case there's duplicates
     for (int i = 0; i < length; i++)
     {
         Add(values[i]);
@@ -55,6 +57,7 @@ HashTable::~HashTable()
     m_values = nullptr;
 }
 
+// Returns a reference to the given value.
 unsigned char*& HashTable::operator[](const char* key)
 {
     unsigned int hashed = Hash((unsigned char*)key);
@@ -83,8 +86,12 @@ unsigned char*& HashTable::operator[](const char* key)
     }
 }
 
+// Adds the given value to the hash table, and returns whether it was successful or not.
 bool HashTable::Add(const char* value)
 {
+    if (value == nullptr)
+        return false;
+
     unsigned int hashed = Hash((unsigned char*)value);
     unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
@@ -114,10 +121,15 @@ bool HashTable::Add(const char* value)
     return false;
 }
 
-bool HashTable::Remove(unsigned char* value)
+// Removes the given value to the hash table, and returns whether it was successful or not.
+bool HashTable::Remove(const char* value)
 {
-    unsigned int hashed = Hash(value);
-    unsigned int index = hashed % m_arrayLength;
+    if (value == nullptr)
+        return false;
+
+    unsigned int hashed = Hash((unsigned char*)value);
+    unsigned int key = hashed % m_arrayLength;
+    unsigned int index = key;
     int numberSearched = 0;
 
     while (true)
@@ -127,7 +139,7 @@ bool HashTable::Remove(unsigned char* value)
 
         if (m_values[index].hashed != 0)
         {
-            if (m_values[index].key == index)
+            if (m_values[index].key == key)
             {
                 if (m_values[index].hashed == hashed)
                 {
@@ -172,11 +184,13 @@ void HashTable::Resize(int size)
     m_values = newValues;
 }
 
+// Checks if the given value is contained in the hash table.
 bool HashTable::Contains(char* value)
 {
     return this->operator[](value) != nullptr;
 }
 
+// Hashes the given character pointer using ELF hash.
 unsigned int HashTable::Hash(unsigned char* value)
 {
     int length = ((std::string)(char*)value).length();
@@ -193,6 +207,7 @@ unsigned int HashTable::Hash(unsigned char* value)
     return (hash & 0x7FFFFFFF);
 }
 
+// Clears the entire array, and reinitalizes it.
 void HashTable::Clear()
 {
     delete[] m_values;
@@ -202,4 +217,6 @@ void HashTable::Clear()
     {
         m_values[i] = HashPair();
     }
+
+    m_count = 0;
 }

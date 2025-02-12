@@ -15,7 +15,7 @@ public:
 	~HashTable();
 	unsigned char*& operator[](const char* key);
 	bool Add(const char* value);
-	bool Remove(unsigned char* value);
+	bool Remove(const char* value);
 	void Resize(int size);
 	bool Contains(char* value);
 	int GetCount() { return m_count; };

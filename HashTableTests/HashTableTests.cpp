@@ -11,6 +11,13 @@ namespace HashTableTests
 	{
 	public:
 		
+		TEST_METHOD(BaseConstructor)
+		{
+			HashTable hash = HashTable();
+
+			Assert::AreEqual(100, hash.GetArrayLength());
+		}
+
 		TEST_METHOD(InitializerListConstructor)
 		{
 			HashTable hash = { "the entire bee movie script", "uhhh", "joker the jimbo", "agony", "agony", "agony", "agony", "agony", "agony", "agony", "agony", "agony", "agony", "agony"};
@@ -36,6 +43,13 @@ namespace HashTableTests
 
 			Assert::IsNull(hash["A"]);
 			Assert::IsNull(hash["AAA"]);
+
+			// return false and do nothing if trying to add nullptr
+			Assert::AreEqual(false, hash.Add(nullptr));
+			Assert::AreEqual(false, hash.Add(nullptr));
+
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(10, hash.GetArrayLength());
 
 			// check that things are added
 			Assert::AreEqual(true, hash.Add("A"));
@@ -72,6 +86,7 @@ namespace HashTableTests
 
 			// try yet fail to add something else
 			Assert::AreEqual(false, hash.Add("etcetera?????"));
+			Assert::AreEqual(false, hash.Add("etcetera????????????"));
 
 			Assert::AreEqual(10, hash.GetCount());
 			Assert::AreEqual(10, hash.GetArrayLength());
@@ -84,6 +99,96 @@ namespace HashTableTests
 			Assert::AreEqual((unsigned char*)"z", hash["z"]);
 			Assert::AreEqual((unsigned char*)"A", hash["A"]);
 			Assert::AreEqual((unsigned char*)"AAA", hash["AAA"]);
+			Assert::AreEqual((unsigned char*)"etcetera,", hash["etcetera,"]);
+			Assert::AreEqual((unsigned char*)"etcetera...", hash["etcetera..."]);
+			Assert::AreEqual((unsigned char*)"etcetera!", hash["etcetera!"]);
+		}
+
+		TEST_METHOD(Remove)
+		{
+			HashTable hash = { "foo", "bar", "x", "y", "z", "a", "b", "c" };
+
+			// make sure noting is wrong with the constructor at all
+			Assert::AreEqual(8, hash.GetCount());
+			Assert::AreEqual(16, hash.GetArrayLength());
+
+			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
+			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
+			Assert::AreEqual((unsigned char*)"x", hash["x"]);
+			Assert::AreEqual((unsigned char*)"y", hash["y"]);
+			Assert::AreEqual((unsigned char*)"z", hash["z"]);
+			Assert::AreEqual((unsigned char*)"a", hash["a"]);
+			Assert::AreEqual((unsigned char*)"b", hash["b"]);
+			Assert::AreEqual((unsigned char*)"c", hash["c"]);
+
+
+			// remove something that does exist and try removing it again
+			Assert::AreEqual(true, hash.Remove("a"));
+			Assert::AreEqual(false, hash.Remove("a"));
+			Assert::AreEqual(false, hash.Remove("a"));
+
+			// check everything all over again
+			Assert::AreEqual(7, hash.GetCount());
+			Assert::AreEqual(16, hash.GetArrayLength());
+
+			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
+			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
+			Assert::AreEqual((unsigned char*)"x", hash["x"]);
+			Assert::AreEqual((unsigned char*)"y", hash["y"]);
+			Assert::AreEqual((unsigned char*)"z", hash["z"]);
+			Assert::IsNull(hash["a"]);
+			Assert::AreEqual((unsigned char*)"b", hash["b"]);
+			Assert::AreEqual((unsigned char*)"c", hash["c"]);
+
+			// remove something that was never in the hash table to begin with
+			Assert::AreEqual(false, hash.Remove("u"));
+			Assert::AreEqual(false, hash.Remove("L"));
+			Assert::AreEqual(false, hash.Remove("position"));
+
+			Assert::AreEqual(7, hash.GetCount());
+			Assert::AreEqual(16, hash.GetArrayLength());
+
+			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
+			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
+			Assert::AreEqual((unsigned char*)"x", hash["x"]);
+			Assert::AreEqual((unsigned char*)"y", hash["y"]);
+			Assert::AreEqual((unsigned char*)"z", hash["z"]);
+			Assert::IsNull(hash["a"]);
+			Assert::AreEqual((unsigned char*)"b", hash["b"]);
+			Assert::AreEqual((unsigned char*)"c", hash["c"]);
+
+			// destroy a buncha stuff
+			Assert::AreEqual(true, hash.Remove("b"));
+			Assert::AreEqual(true, hash.Remove("c"));
+			Assert::AreEqual(true, hash.Remove("z"));
+			Assert::AreEqual(true, hash.Remove("y"));
+			Assert::AreEqual(true, hash.Remove("x"));
+
+			Assert::AreEqual(2, hash.GetCount());
+			Assert::AreEqual(16, hash.GetArrayLength());
+
+			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
+			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
+			Assert::IsNull(hash["x"]);
+			Assert::IsNull(hash["y"]);
+			Assert::IsNull(hash["z"]);
+			Assert::IsNull(hash["a"]);
+			Assert::IsNull(hash["b"]);
+			Assert::IsNull(hash["c"]);
+
+			// add something then remove it immediately
+
+			Assert::AreEqual(true, hash.Add("CORN"));
+			Assert::AreEqual(true, hash.Remove("CORN"));
+			Assert::AreEqual(true, hash.Add("CORN"));
+			Assert::AreEqual(true, hash.Remove("CORN"));
+
+			Assert::AreEqual(2, hash.GetCount());
+			Assert::AreEqual(16, hash.GetArrayLength());
+
+			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
+			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
+			Assert::IsNull(hash["CORN"]);
 		}
 	};
 }
