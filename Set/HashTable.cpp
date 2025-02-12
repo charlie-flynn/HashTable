@@ -65,8 +65,8 @@ unsigned char*& HashTable::operator[](char* value)
     {
         if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == 0)
         {
-            unsigned char* placeholder = nullptr;
-            return placeholder;
+            unsigned char* nullpointer = nullptr;
+            return nullpointer;
         }
 
         if (m_values[index].key == key)
@@ -164,7 +164,7 @@ unsigned int HashTable::Hash(unsigned char* value)
 {
     int length = ((std::string)(char*)value).length();
     unsigned int hash = 0, x = 0;
-    for (unsigned int i = 0; i < length; i++)
+    for (int i = 0; i < length; i++)
     {
         hash = (hash << 4) + value[i];
         if ((x = hash & 0xF0000000L) != 0) 

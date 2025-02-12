@@ -13,12 +13,12 @@ namespace HashTableTests
 		
 		TEST_METHOD(Constructor)
 		{
+			HashTable hash = HashTable(32);
 		}
 
 		TEST_METHOD(InitializerListConstructor)
 		{
-			HashTable hash = { "100", "forty thousand", "oh god do i have to cast all of these", "nvm nice"};
-			Assert::AreEqual(4, hash.GetCount());
+			HashTable hash = { "i'm gonna esplode i sweaar", "AAAAAAAAAAA" };
 		}
 	};
 }

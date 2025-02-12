@@ -6,7 +6,7 @@ template <typename T>
 class Set 
 {
 private:
-	Pair<T, T>[] m_values;
+	Pair<T, T>* m_values;
 	int m_length;
 	int m_arrayLength;
 
