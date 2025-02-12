@@ -4,9 +4,9 @@
 
 HashTable::HashTable(int size)
 {
-    m_length = size;
-    m_arrayLength = m_length * 2;
-    m_values = new HashPair();
+    m_count = 0;
+    m_arrayLength = size;
+    m_values = new HashPair[m_arrayLength];
 
     for (int i = 0; i < m_arrayLength; i++)
     {
@@ -16,9 +16,9 @@ HashTable::HashTable(int size)
 
 HashTable::HashTable(std::initializer_list<const char*> values)
 {
-    m_length = values.size();
-    m_arrayLength = m_length * 2;
-    m_values = new HashPair();
+    m_count = values.size();
+    m_arrayLength = m_count * 2;
+    m_values = new HashPair[m_arrayLength];
 
     for (int i = 0; i < m_arrayLength; i++)
     {
@@ -33,9 +33,9 @@ HashTable::HashTable(std::initializer_list<const char*> values)
 
 HashTable::HashTable(char* values, int length)
 {
-    m_length = length;
-    m_arrayLength = m_length * 2;
-    m_values = new HashPair();
+    m_count = length;
+    m_arrayLength = m_count * 2;
+    m_values = new HashPair[m_arrayLength];
 
     for (int i = 0; i < m_arrayLength; i++)
     {
@@ -54,7 +54,7 @@ HashTable::~HashTable()
     m_values = nullptr;
 }
 
-unsigned char* HashTable::operator[](char* value)
+unsigned char*& HashTable::operator[](char* value)
 {
     unsigned int hashed = Hash((unsigned char*)value);
     unsigned int key = hashed % m_arrayLength;
@@ -63,8 +63,11 @@ unsigned char* HashTable::operator[](char* value)
 
     while (true)
     {
-        if (numberSearched == m_arrayLength - 1 || &m_values[index] == nullptr)
-            return nullptr;
+        if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == 0)
+        {
+            unsigned char* placeholder = nullptr;
+            return placeholder;
+        }
 
         if (m_values[index].key == key)
         {
@@ -88,7 +91,7 @@ bool HashTable::Add(unsigned char* value)
 
     while (true)
     {
-        if (numberSearched == m_arrayLength - 1)
+        if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == hashed)
             return false;
 
         if (m_values[index].key == HashPair().key)
@@ -117,13 +120,14 @@ bool HashTable::Remove(unsigned char* value)
         if (numberSearched == m_arrayLength - 1)
             return false;
 
-        if (&m_values[index] != nullptr)
+        if (m_values[index].hashed != 0)
         {
             if (m_values[index].key == index)
             {
                 if (m_values[index].hashed == hashed)
                 {
                     m_values[index] = HashPair();
+                    m_count++;
                     return true;
                 }
             }
@@ -135,6 +139,25 @@ bool HashTable::Remove(unsigned char* value)
     }
 
     return false;
+}
+
+void HashTable::Resize(int size)
+{
+    HashPair* newValues = new HashPair[size];
+    int oldLength = m_arrayLength;
+    m_arrayLength = size;
+    for (int i = 0; i < oldLength; i++)
+    {
+        if (m_values[i].hashed != 0)
+            newValues[m_values[i].hashed % size] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);   
+    }
+    delete[] m_values;
+    m_values = newValues;
+}
+
+bool HashTable::Contains(char* value)
+{
+    return this->operator[](value) != nullptr;
 }
 
 unsigned int HashTable::Hash(unsigned char* value)
