@@ -14,8 +14,39 @@ namespace HashTableTests
 		TEST_METHOD(BaseConstructor)
 		{
 			HashTable hash = HashTable();
-
 			Assert::AreEqual(100, hash.GetArrayLength());
+
+			HashTable hoosh = HashTable(42);
+			Assert::AreEqual(42, hoosh.GetArrayLength());
+
+			HashTable heesh = HashTable(999999);
+			Assert::AreEqual(999999, heesh.GetArrayLength());
+		}
+
+		TEST_METHOD(CharPointerArrayConstructor)
+		{
+			char* values[10] = { "bing", "bop", "bam", "pow", "slam", "foo", "bar", "x", "y", "z" };
+
+			HashTable hash = HashTable(values, 10);
+
+			// make sure all of the values are in there
+			Assert::AreEqual(10, hash.GetCount());
+			Assert::AreEqual(20, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("bing"));
+			Assert::IsTrue(hash.Contains("bop"));
+			Assert::IsTrue(hash.Contains("bam"));
+			Assert::IsTrue(hash.Contains("pow"));
+			Assert::IsTrue(hash.Contains("slam"));
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			Assert::IsFalse(hash.Contains("rab"));
+			Assert::IsFalse(hash.Contains("mals"));
+			Assert::IsFalse(hash.Contains("Pow"));
 		}
 
 		TEST_METHOD(InitializerListConstructor)
@@ -24,11 +55,13 @@ namespace HashTableTests
 
 			Assert::AreEqual(4, hash.GetCount());
 
+			// make sure things are in there
 			Assert::AreEqual((unsigned char*)"the entire bee movie script", hash["the entire bee movie script"]);
 			Assert::AreEqual((unsigned char*)"uhhh", hash["uhhh"]);
 			Assert::AreEqual((unsigned char*)"joker the jimbo", hash["joker the jimbo"]);
 			Assert::AreEqual((unsigned char*)"agony", hash["agony"]);
 
+			// make sure things that arent  in there arent in there
 			Assert::IsNull(hash["chat is this null? is this null pointer? oh my god it's f###ing null pointer. are you kidding me. god dammit. ####."]);
 			Assert::IsNull(hash["jimbo the joker"]);
 			Assert::IsNull(hash["yagon"]);
@@ -108,7 +141,7 @@ namespace HashTableTests
 		{
 			HashTable hash = { "foo", "bar", "x", "y", "z", "a", "b", "c" };
 
-			// make sure noting is wrong with the constructor at all
+			// make sure nothing is wrong with the constructor at all
 			Assert::AreEqual(8, hash.GetCount());
 			Assert::AreEqual(16, hash.GetArrayLength());
 
@@ -177,7 +210,6 @@ namespace HashTableTests
 			Assert::IsNull(hash["c"]);
 
 			// add something then remove it immediately
-
 			Assert::AreEqual(true, hash.Add("CORN"));
 			Assert::AreEqual(true, hash.Remove("CORN"));
 			Assert::AreEqual(true, hash.Add("CORN"));

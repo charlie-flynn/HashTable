@@ -57,7 +57,7 @@ HashTable::~HashTable()
     m_values = nullptr;
 }
 
-// Returns a reference to the given value.
+// Returns a reference to the given value, or nullptr if it isn't in the table.
 unsigned char*& HashTable::operator[](const char* key)
 {
     unsigned int hashed = Hash((unsigned char*)key);
@@ -159,7 +159,7 @@ bool HashTable::Remove(const char* value)
 }
 
 // Resizes the hash table to the given size.
-// NOTE: if the size is smaller than the current count, you will lose data!
+// NOTE: If the size is smaller than the current count, you will lose data!
 void HashTable::Resize(int size)
 {
     int copiedCount = 0;
@@ -173,7 +173,7 @@ void HashTable::Resize(int size)
         {
             newValues[m_values[i].hashed % size] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);   
             copiedCount++;
-            if (copiedCount > size)
+            if (copiedCount >= oldLength)
             {
                 m_count = copiedCount;
                 break;
