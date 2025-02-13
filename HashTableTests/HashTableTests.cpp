@@ -235,6 +235,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
+			// try resizing it to larger and larger numbers
 			hash.Resize(50);
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(50, hash.GetArrayLength());
@@ -265,6 +266,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
+			hash.Resize(500);
 
 			hash.Resize(5);
 			Assert::AreEqual(5, hash.GetCount());
@@ -342,6 +344,90 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("a"));
 			Assert::IsTrue(hash.Contains("b"));
 			Assert::IsTrue(hash.Contains("c"));
+		}
+
+		TEST_METHOD(Clear)
+		{
+			HashTable hash = { "foo", "bar", "x", "y", "z" };
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(10, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			hash.Clear();
+
+			Assert::AreEqual(0, hash.GetCount());
+			Assert::AreEqual(10, hash.GetArrayLength());
+
+			Assert::IsFalse(hash.Contains("foo"));
+			Assert::IsFalse(hash.Contains("bar"));
+			Assert::IsFalse(hash.Contains("x"));
+			Assert::IsFalse(hash.Contains("y"));
+			Assert::IsFalse(hash.Contains("z"));
+
+			hash.Resize(15);
+
+			Assert::AreEqual(15, hash.GetArrayLength());
+
+			hash.Add("MAB");
+			hash.Add("BAM");
+			hash.Add("PAM");
+			hash.Add("MAP");
+			hash.Add("MAD");
+			hash.Add("DAM");
+			hash.Add("DAD");
+			hash.Add("DAN");
+			hash.Add("FAN");
+			hash.Add("FAX");
+			hash.Add("TAX");
+			hash.Add("SAX");
+			hash.Add("WAX");
+			hash.Add("WAM");
+			hash.Add("MAW");
+
+			Assert::AreEqual(15, hash.GetCount());
+			Assert::AreEqual(15, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("MAB"));
+			Assert::IsTrue(hash.Contains("BAM"));
+			Assert::IsTrue(hash.Contains("PAM"));
+			Assert::IsTrue(hash.Contains("MAP"));
+			Assert::IsTrue(hash.Contains("MAD"));
+			Assert::IsTrue(hash.Contains("DAM"));
+			Assert::IsTrue(hash.Contains("DAD"));
+			Assert::IsTrue(hash.Contains("DAN"));
+			Assert::IsTrue(hash.Contains("FAN"));
+			Assert::IsTrue(hash.Contains("FAX"));
+			Assert::IsTrue(hash.Contains("TAX"));
+			Assert::IsTrue(hash.Contains("SAX"));
+			Assert::IsTrue(hash.Contains("WAX"));
+			Assert::IsTrue(hash.Contains("WAM"));
+			Assert::IsTrue(hash.Contains("MAW"));
+
+			hash.Clear();
+
+			Assert::AreEqual(0, hash.GetCount());
+			Assert::AreEqual(15, hash.GetArrayLength());
+
+			Assert::IsFalse(hash.Contains("MAB"));
+			Assert::IsFalse(hash.Contains("BAM"));
+			Assert::IsFalse(hash.Contains("PAM"));
+			Assert::IsFalse(hash.Contains("MAP"));
+			Assert::IsFalse(hash.Contains("MAD"));
+			Assert::IsFalse(hash.Contains("DAM"));
+			Assert::IsFalse(hash.Contains("DAD"));
+			Assert::IsFalse(hash.Contains("DAN"));
+			Assert::IsFalse(hash.Contains("FAN"));
+			Assert::IsFalse(hash.Contains("FAX"));
+			Assert::IsFalse(hash.Contains("TAX"));
+			Assert::IsFalse(hash.Contains("SAX"));
+			Assert::IsFalse(hash.Contains("WAX"));
+			Assert::IsFalse(hash.Contains("WAM"));
+			Assert::IsFalse(hash.Contains("MAW"));
 		}
 	};
 }

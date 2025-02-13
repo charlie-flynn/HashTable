@@ -1,6 +1,5 @@
 #include "HashTable.h"
 #include <string>
-#include <iostream>
 
 // Creates an empty hash table of the given size.
 HashTable::HashTable(int size)
@@ -69,12 +68,9 @@ unsigned char*& HashTable::operator[](const char* key)
 
     for (int i = 0; i < m_arrayLength && m_values[index].hashed != 0; i++)
     {
-        if (m_values[index].key == keyAsIndex)
+        if (m_values[index].hashed == hashed)
         {
-            if (m_values[index].hashed == hashed)
-            {
-                return m_values[index].value;
-            }
+            return m_values[index].value;
         }
 
         index = (index + 1) % m_arrayLength;
@@ -125,18 +121,16 @@ bool HashTable::Remove(const char* value)
     unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
 
+    // find the value, replace it with a empty hashpair decrement the count and return true if it's found. otherwise return false
     for (int i = 0; i < m_arrayLength; i++)
     {
         if (m_values[index].hashed != 0)
         {
-            if (m_values[index].key == key)
+            if (m_values[index].hashed == hashed)
             {
-                if (m_values[index].hashed == hashed)
-                {
-                    m_values[index] = HashPair();
-                    m_count--;
-                    return true;
-                }
+                m_values[index] = HashPair();
+                m_count--;
+                return true;
             }
         }
 
@@ -154,7 +148,6 @@ void HashTable::Resize(int size)
     if (size == m_arrayLength || size <= 0)
         return;
 
-    // keep track of the amount copied over
     int copiedCount = 0;
 
     // make a new array, and intialize all the values
@@ -167,7 +160,7 @@ void HashTable::Resize(int size)
 
     for (int i = 0; i < m_arrayLength; i++)
     {
-        // if there is a value in the given space, rehash it and copy it over to the new array
+        // if there is a value in the given index in the old array, rehash it and copy it over to the new array
         if (m_values[i].hashed != 0)
         {
             int j = Hash(m_values[i].value) % size;
@@ -195,7 +188,7 @@ void HashTable::Resize(int size)
         }
     }
 
-    // delete the old values and bring in the new values
+    // delete the old values and copy over the new values
     delete[] m_values;
     m_values = newValues;
     m_arrayLength = size;
