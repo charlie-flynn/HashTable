@@ -9,6 +9,7 @@ HashTable::HashTable(int size)
     m_arrayLength = size;
     m_values = new HashPair[m_arrayLength];
 
+    // initialize the array
     for (int i = 0; i < m_arrayLength; i++)
     {
         m_values[i] = HashPair();
@@ -22,11 +23,11 @@ HashTable::HashTable(std::initializer_list<const char*> values)
     m_arrayLength = values.size() * 2;
     m_values = new HashPair[m_arrayLength];
 
+    // initialize the array, then add the values to it
     for (int i = 0; i < m_arrayLength; i++)
     {
         m_values[i] = HashPair();
     }
-
     for (const char* value : values)
     {
         Add(value);
@@ -40,6 +41,7 @@ HashTable::HashTable(char* values[], int length)
     m_arrayLength = length * 2;
     m_values = new HashPair[m_arrayLength];
 
+    // initialize the array, then add the values to it
     for (int i = 0; i < m_arrayLength; i++)
     {
         m_values[i] = HashPair();
@@ -61,19 +63,13 @@ HashTable::~HashTable()
 unsigned char*& HashTable::operator[](const char* key)
 {
     unsigned int hashed = Hash((unsigned char*)key);
-    unsigned int keyHashed = hashed % m_arrayLength;
-    unsigned int index = keyHashed;
+    unsigned int keyAsIndex = hashed % m_arrayLength;
+    unsigned int index = keyAsIndex;
     int numberSearched = 0;
 
-    while (true)
+    for (int i = 0; i < m_arrayLength && m_values[index].hashed != 0; i++)
     {
-        if (numberSearched == m_arrayLength || m_values[index].hashed == 0)
-        {
-            unsigned char* nullpointer = nullptr;
-            return nullpointer;
-        }
-
-        if (m_values[index].key == keyHashed)
+        if (m_values[index].key == keyAsIndex)
         {
             if (m_values[index].hashed == hashed)
             {
@@ -84,6 +80,9 @@ unsigned char*& HashTable::operator[](const char* key)
         index = (index + 1) % m_arrayLength;
         numberSearched++;
     }
+
+    unsigned char* nullPointer = nullptr;
+    return nullPointer;
 }
 
 // Adds the given value to the hash table, and returns whether it was successful or not.
