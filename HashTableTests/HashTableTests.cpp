@@ -222,5 +222,70 @@ namespace HashTableTests
 			Assert::AreEqual((unsigned char*)"bar", hash["bar"]);
 			Assert::IsNull(hash["CORN"]);
 		}
+
+		TEST_METHOD(Resize)
+		{
+			HashTable hash = { "foo", "bar", "x", "y", "z" };
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(10, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			hash.Resize(50);
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(50, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			hash.Resize(100);
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(100, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			hash.Resize(10000);
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(10000, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+
+			hash.Resize(5);
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(5, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			hash.Resize(1);
+			Assert::AreEqual(1, hash.GetCount());
+			Assert::AreEqual(1, hash.GetArrayLength());
+
+			// if it contains any of these it's good and it's fine ok ?
+			Assert::IsTrue(hash.Contains("foo") ||
+				hash.Contains("bar") ||
+				hash.Contains("x") ||
+				hash.Contains("y") ||
+				hash.Contains("z"));
+		}
 	};
 }

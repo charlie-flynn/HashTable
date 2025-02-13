@@ -15,7 +15,7 @@ HashTable::HashTable(int size)
     }
 }
 
-// Creates a hash table of twice the size of the given initializer list, with the given contents inside.
+// Creates a hash table of twice the length of the given initializer list, with the given contents inside.
 HashTable::HashTable(std::initializer_list<const char*> values)
 {
     m_count = 0;
@@ -33,7 +33,7 @@ HashTable::HashTable(std::initializer_list<const char*> values)
     }
 }
 
-// Creates a hash table of twice the size of the given character pointer array, with the given contents inside.
+// Creates a hash table of twice the length of the given character pointer array, with the given contents inside.
 HashTable::HashTable(char* values[], int length)
 {
     m_count = 0;
@@ -67,7 +67,7 @@ unsigned char*& HashTable::operator[](const char* key)
 
     while (true)
     {
-        if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == 0)
+        if (numberSearched == m_arrayLength || m_values[index].hashed == 0)
         {
             unsigned char* nullpointer = nullptr;
             return nullpointer;
@@ -162,6 +162,10 @@ bool HashTable::Remove(const char* value)
 // NOTE: If the size is smaller than the current count, you will lose data!
 void HashTable::Resize(int size)
 {
+    if (size == m_arrayLength)
+        return;
+
+
     int copiedCount = 0;
 
     HashPair* newValues = new HashPair[size];
@@ -171,13 +175,40 @@ void HashTable::Resize(int size)
     {
         if (m_values[i].hashed != 0)
         {
-            newValues[m_values[i].hashed % size] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);   
+            int j = Hash(m_values[i].value) % size;
+            while (true)
+            {
+                if (newValues[j].hashed == 0)
+                {
+                    newValues[j] = HashPair(Hash(m_values[i].value) % size, m_values[i].value, m_values[i].hashed);
+                    break;
+                }
+                else
+                {
+                    j = (j + 1) % size;
+                }
+            }
+
             copiedCount++;
-            if (copiedCount >= oldLength)
+            if (copiedCount >= size)
             {
                 m_count = copiedCount;
                 break;
             }
+        }
+        else
+        {
+            if (i < size)
+                newValues[i] = HashPair();
+        }
+    }
+
+    if (size > oldLength)
+    {
+        for (int i = oldLength; i < size; i++)
+        {
+            if (newValues[i].hashed == 0)
+                newValues[i] = HashPair();
         }
     }
     delete[] m_values;
