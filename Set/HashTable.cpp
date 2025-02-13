@@ -89,22 +89,17 @@ unsigned char*& HashTable::operator[](const char* key)
 // Adds the given value to the hash table, and returns whether it was successful or not.
 bool HashTable::Add(const char* value)
 {
-    if (value == nullptr)
+    if (value == nullptr || m_count >= m_arrayLength)
         return false;
 
+    // get the value hashed and store that and the value modulated to the array's size for later
     unsigned int hashed = Hash((unsigned char*)value);
     unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
     int numberSearched = 0;
 
-    if (m_count >= m_arrayLength)
-        return false;
-
-    while (true)
+    for (int i = 0; i < m_arrayLength && m_values[index].hashed != hashed; i++)
     {
-        if (numberSearched == m_arrayLength - 1 || m_values[index].hashed == hashed)
-            return false;
-
         if (m_values[index].hashed == 0)
         {
             m_values[index] = HashPair(key, (unsigned char*)value, hashed);
@@ -130,13 +125,9 @@ bool HashTable::Remove(const char* value)
     unsigned int hashed = Hash((unsigned char*)value);
     unsigned int key = hashed % m_arrayLength;
     unsigned int index = key;
-    int numberSearched = 0;
 
-    while (true)
+    for (int i = 0; i < m_arrayLength; i++)
     {
-        if (numberSearched == m_arrayLength - 1)
-            return false;
-
         if (m_values[index].hashed != 0)
         {
             if (m_values[index].key == key)
@@ -151,28 +142,33 @@ bool HashTable::Remove(const char* value)
         }
 
         index = (index + 1) % m_arrayLength;
-        numberSearched++;
-
     }
 
     return false;
 }
 
 // Resizes the hash table to the given size.
-// NOTE: If the size is smaller than the current count, you will lose data!
+// WARNING: If the size is smaller than the current count, you will lose data and there is no good way to know what data you lost!
 void HashTable::Resize(int size)
 {
-    if (size == m_arrayLength)
+    // guard clause
+    if (size == m_arrayLength || size <= 0)
         return;
 
-
+    // keep track of the amount copied over
     int copiedCount = 0;
 
+    // make a new array, and intialize all the values
     HashPair* newValues = new HashPair[size];
-    int oldLength = m_arrayLength;
-    m_arrayLength = size;
-    for (int i = 0; i < oldLength; i++)
+
+    for (int i = 0; i < size; i++)
     {
+        newValues[i] = HashPair();
+    }
+
+    for (int i = 0; i < m_arrayLength; i++)
+    {
+        // if there is a value in the given space, rehash it and copy it over to the new array
         if (m_values[i].hashed != 0)
         {
             int j = Hash(m_values[i].value) % size;
@@ -190,29 +186,20 @@ void HashTable::Resize(int size)
             }
 
             copiedCount++;
+
+            // check if the amount copied is equal to the size of the array, and if so, end the loop early
             if (copiedCount >= size)
             {
                 m_count = copiedCount;
                 break;
             }
         }
-        else
-        {
-            if (i < size)
-                newValues[i] = HashPair();
-        }
     }
 
-    if (size > oldLength)
-    {
-        for (int i = oldLength; i < size; i++)
-        {
-            if (newValues[i].hashed == 0)
-                newValues[i] = HashPair();
-        }
-    }
+    // delete the old values and bring in the new values
     delete[] m_values;
     m_values = newValues;
+    m_arrayLength = size;
 }
 
 // Checks if the given value is contained in the hash table.

@@ -287,5 +287,61 @@ namespace HashTableTests
 				hash.Contains("y") ||
 				hash.Contains("z"));
 		}
+
+		TEST_METHOD(Contains)
+		{
+			HashTable hash = { "foo", "bar", "x", "y", "z" };
+
+			// check if it finds what is is the hash table
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			// and if it doesn't find what isn't in it
+			Assert::IsFalse(hash.Contains("FoO"));
+			Assert::IsFalse(hash.Contains("Foo"));
+			Assert::IsFalse(hash.Contains("fOO"));
+			Assert::IsFalse(hash.Contains("BAr"));
+			Assert::IsFalse(hash.Contains("BaR"));
+			Assert::IsFalse(hash.Contains("X"));
+			Assert::IsFalse(hash.Contains("Y"));
+			Assert::IsFalse(hash.Contains("Z"));
+
+			// check if it doesn't find things that are removed
+			hash.Remove("foo");
+			hash.Remove("bar");
+
+			Assert::IsFalse(hash.Contains("foo"));
+			Assert::IsFalse(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			// check if it finds them after they're added back
+			hash.Add("foo");
+			hash.Add("bar");
+			
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			// check if it finds new things added in
+			hash.Add("a");
+			hash.Add("b");
+			hash.Add("c");
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+			Assert::IsTrue(hash.Contains("a"));
+			Assert::IsTrue(hash.Contains("b"));
+			Assert::IsTrue(hash.Contains("c"));
+		}
 	};
 }
