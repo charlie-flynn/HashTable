@@ -268,8 +268,8 @@ namespace HashTableTests
 
 			// now smaller!
 			hash.Resize(5000);
-			Assert::AreEqual(5000, hash.GetCount());
-			Assert::AreEqual(5, hash.GetArrayLength());
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(5000, hash.GetArrayLength());
 
 			Assert::IsTrue(hash.Contains("foo"));
 			Assert::IsTrue(hash.Contains("bar"));
@@ -278,8 +278,8 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("z"));
 
 			hash.Resize(500);
-			Assert::AreEqual(500, hash.GetCount());
-			Assert::AreEqual(5, hash.GetArrayLength());
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(500, hash.GetArrayLength());
 
 			Assert::IsTrue(hash.Contains("foo"));
 			Assert::IsTrue(hash.Contains("bar"));
