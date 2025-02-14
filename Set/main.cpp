@@ -9,6 +9,4 @@ int main()
 
 	if (hash[(char*)("fraty")] != nullptr)
 		std::cout << hash[(char*)"fraty"] << std::endl;
-
-
 }

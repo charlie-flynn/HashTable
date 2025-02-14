@@ -194,7 +194,7 @@ void HashTable::Resize(int size)
     m_arrayLength = size;
 }
 
-// Checks if the given value is contained in the hash table.
+// Returns true if the given value is contained in the hash table.
 bool HashTable::Contains(char* value)
 {
     return this->operator[](value) != nullptr;
