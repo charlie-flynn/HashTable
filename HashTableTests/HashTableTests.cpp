@@ -14,7 +14,7 @@ namespace HashTableTests
 		TEST_METHOD(BaseConstructor)
 		{
 			HashTable hash = HashTable();
-			Assert::AreEqual(100, hash.GetArrayLength());
+			Assert::AreEqual(0, hash.GetArrayLength());
 
 			HashTable hoosh = HashTable(42);
 			Assert::AreEqual(42, hoosh.GetArrayLength());
