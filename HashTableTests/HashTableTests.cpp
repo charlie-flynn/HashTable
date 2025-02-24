@@ -101,7 +101,7 @@ namespace HashTableTests
 			// add somethin else
 			Assert::AreEqual(true, hash.Add("AAA"));
 			Assert::AreEqual(7, hash.GetCount());
-			Assert::AreEqual(10, hash.GetArrayLength());
+			Assert::AreEqual(20, hash.GetArrayLength());
 			Assert::AreEqual((unsigned char*)"A", hash["A"]);
 			Assert::AreEqual((unsigned char*)"AAA", hash["AAA"]);
 
@@ -111,18 +111,18 @@ namespace HashTableTests
 			Assert::AreEqual(true, hash.Add("etcetera!"));
 
 			Assert::AreEqual(10, hash.GetCount());
-			Assert::AreEqual(10, hash.GetArrayLength());
+			Assert::AreEqual(20, hash.GetArrayLength());
 
 			Assert::AreEqual((unsigned char*)"etcetera,", hash["etcetera,"]);
 			Assert::AreEqual((unsigned char*)"etcetera...", hash["etcetera..."]);
 			Assert::AreEqual((unsigned char*)"etcetera!", hash["etcetera!"]);
 
-			// try yet fail to add something else
-			Assert::AreEqual(false, hash.Add("etcetera?????"));
-			Assert::AreEqual(false, hash.Add("etcetera????????????"));
+			// try and succeed to add something else
+			Assert::AreEqual(true, hash.Add("etcetera?????"));
+			Assert::AreEqual(true, hash.Add("etcetera????????????"));
 
-			Assert::AreEqual(10, hash.GetCount());
-			Assert::AreEqual(10, hash.GetArrayLength());
+			Assert::AreEqual(12, hash.GetCount());
+			Assert::AreEqual(20, hash.GetArrayLength());
 
 			// make sure everything is still in the array
 			Assert::AreEqual((unsigned char*)"foo", hash["foo"]);
@@ -236,7 +236,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("z"));
 
 			// try resizing it to larger and larger numbers
-			hash.Resize(50);
+			Assert::IsTrue(hash.Resize(50));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(50, hash.GetArrayLength());
 
@@ -246,7 +246,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			hash.Resize(100);
+			Assert::IsTrue(hash.Resize(100));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(100, hash.GetArrayLength());
 
@@ -256,7 +256,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			hash.Resize(10000);
+			Assert::IsTrue(hash.Resize(10000));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(10000, hash.GetArrayLength());
 
@@ -266,8 +266,8 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			// now smaller!
-			hash.Resize(5000);
+			// now smaller! 
+			Assert::IsTrue(hash.Resize(5000));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(5000, hash.GetArrayLength());
 
@@ -277,7 +277,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			hash.Resize(500);
+			Assert::IsTrue(hash.Resize(500));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(500, hash.GetArrayLength());
 
@@ -287,7 +287,7 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			hash.Resize(5);
+			Assert::IsTrue(hash.Resize(5));
 			Assert::AreEqual(5, hash.GetCount());
 			Assert::AreEqual(5, hash.GetArrayLength());
 
@@ -297,17 +297,36 @@ namespace HashTableTests
 			Assert::IsTrue(hash.Contains("y"));
 			Assert::IsTrue(hash.Contains("z"));
 
-			// and finally just 1. which will lose data but oh well
-			hash.Resize(1);
-			Assert::AreEqual(1, hash.GetCount());
-			Assert::AreEqual(1, hash.GetArrayLength());
+			// and finally try to resize to a lower size than the count. which will not work
+			Assert::IsFalse(hash.Resize(1));
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(5, hash.GetArrayLength());
 
-			// if it contains any of these it's good and it's fine ok ?
-			Assert::IsTrue(hash.Contains("foo") ||
-				hash.Contains("bar") ||
-				hash.Contains("x") ||
-				hash.Contains("y") ||
-				hash.Contains("z"));
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			Assert::IsFalse(hash.Resize(2));
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(5, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
+
+			Assert::IsFalse(hash.Resize(3));
+			Assert::AreEqual(5, hash.GetCount());
+			Assert::AreEqual(5, hash.GetArrayLength());
+
+			Assert::IsTrue(hash.Contains("foo"));
+			Assert::IsTrue(hash.Contains("bar"));
+			Assert::IsTrue(hash.Contains("x"));
+			Assert::IsTrue(hash.Contains("y"));
+			Assert::IsTrue(hash.Contains("z"));
 		}
 
 		TEST_METHOD(Contains)
@@ -410,7 +429,7 @@ namespace HashTableTests
 			hash.Add("MAW");
 
 			Assert::AreEqual(15, hash.GetCount());
-			Assert::AreEqual(15, hash.GetArrayLength());
+			Assert::AreEqual(30, hash.GetArrayLength());
 
 			Assert::IsTrue(hash.Contains("MAB"));
 			Assert::IsTrue(hash.Contains("BAM"));
@@ -431,7 +450,7 @@ namespace HashTableTests
 			hash.Clear();
 
 			Assert::AreEqual(0, hash.GetCount());
-			Assert::AreEqual(15, hash.GetArrayLength());
+			Assert::AreEqual(30, hash.GetArrayLength());
 
 			Assert::IsFalse(hash.Contains("MAB"));
 			Assert::IsFalse(hash.Contains("BAM"));
