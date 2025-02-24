@@ -39,11 +39,9 @@
 |-----------------------------------------|------------------------------------------------------------------------------------------|
 | bool Add(const char* value)             | Adds the given value to the hash table, and returns whether it was successful or not.    |
 | bool Remove(const char* value)          | Removes the given value to the hash table, and returns whether it was successful or not. |
-| int Resize(int size)                    | Resizes the hash table to the given size.[^1]                                            |
+| int Resize(int size)                    | Resizes the hash table to the given size. Will not resize lower than the count.                                           |
 | bool Contains(char* value)              | Returns true if the given value is contained in the hash table.                          |
 | int GetCount()                          | Returns the amount of things stored in the HashTable.                                    |
 | int GetArrayLength()                    | Returns the length of the array within the HashTable.                                    |
 | unsigned int Hash(unsigned char* value) | Hashes the given character pointer using ELF hash.                                       |
 | void Clear()                            | Clears the entire array and reinitializes it.                                            |
-
-[^1]: If the size is smaller than the current count, you will lose data and there is no good way to know what data you lost!
